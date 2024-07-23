@@ -112,9 +112,10 @@ class TimescaledbDDLCompiler(PGDDLCompiler):
 
     @staticmethod
     def ddl_compression_policy(table_name, compress):
-        schedule_interval = _get_interval(compress.get('compression_policy_schedule_interval', '7 days'))
+        compress_after = _get_interval(compress.get('compression_policy_compress_after', '7 days'))
+        schedule_interval = _get_interval(compress.get('compression_policy_schedule_interval', None))
 
-        parameters = _create_map(dict(schedule_interval=schedule_interval))
+        parameters = _create_map(dict(compress_after=compress_after, schedule_interval=schedule_interval))
         return DDL(textwrap.dedent(f"""SELECT add_compression_policy('{table_name}', {parameters})"""))
 
     @staticmethod
